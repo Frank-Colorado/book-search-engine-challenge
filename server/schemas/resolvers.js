@@ -5,7 +5,7 @@ const { signToken } = require("../utils/auth");
 const resolvers = {
   Query: {
     // This is a query called me that returns a User type.
-    me: async (_parent, _args, context) => {
+    me: async (_root, _args, context) => {
       // If the user is authenticated
       if (context.user) {
         // Find the user with the id that was stored in the token
@@ -24,7 +24,7 @@ const resolvers = {
     Mutation: {
         // This is a mutation called login that returns an Auth type.
         // The email and password are destructured from the args argument.
-        login: async (_parent, { email, password }) => {
+        login: async (_root, { email, password }) => {
             // Find the user with the email that was passed in
             const userData = await User.findOne({ email });
             // If there is no user with that email
@@ -56,6 +56,27 @@ const resolvers = {
             // Return an Auth type that contains the token and user data
             return { token, userData };
         },
+        // This is a mutation called saveBook that returns a User type.
+        saveBook: async (_root, args, context) => {
+            // If the context contains a user
+            if (context.user) {
+                // Find the user with the id that was stored in the token
+                // And add the book to the user's savedBooks array
+                const updatedUser = await User.findByIdAndUpdate(
+                    { _id: context.user._id },
+                    { $addToSet: { savedBooks: args } },
+                    { new: true, runValidators: true }
+                );
+                // Return the updated user
+                return updatedUser;
+            }
+            // If the context does not contain a user
+            // Throw an AuthenticationError
+            throw new AuthenticationError("You need to be logged in!");
+        },
+        
+
+
     
 };
 
