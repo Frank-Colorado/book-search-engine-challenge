@@ -28,9 +28,6 @@ const SavedBooks = () => {
         variables: { bookId },
       });
 
-      if (!response.ok) {
-        throw new Error("something went wrong!");
-      }
       const updatedUser = data.removeBook;
       setUserData(updatedUser);
       // upon success, remove book's id from localStorage

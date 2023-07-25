@@ -33,11 +33,6 @@ const LoginForm = () => {
       const { data } = await login({
         variables: { ...userFormData },
       });
-
-      if (!response.ok) {
-        throw new Error("something went wrong!");
-      }
-
       const { token } = data.login;
       Auth.login(token);
     } catch (err) {
