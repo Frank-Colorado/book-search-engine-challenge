@@ -27,3 +27,23 @@ export const ADD_USER = gql`
     }
   }
 `;
+
+// This is a mutation called SAVE_BOOK that returns a User type.
+export const SAVE_BOOK = gql`
+  mutation saveBook($input: BookInput) {
+    saveBook(input: $input) {
+      _id
+      username
+      email
+      bookCount
+      savedBooks {
+        bookId
+        authors
+        description
+        image
+        link
+        title
+      }
+    }
+  }
+`;
