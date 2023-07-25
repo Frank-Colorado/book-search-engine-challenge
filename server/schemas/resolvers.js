@@ -23,6 +23,7 @@ const resolvers = {
   },
     Mutation: {
         // This is a mutation called login that returns an Auth type.
+        // The email and password are destructured from the args argument.
         login: async (_parent, { email, password }) => {
             // Find the user with the email that was passed in
             const userData = await User.findOne({ email });
@@ -40,6 +41,16 @@ const resolvers = {
                 throw new AuthenticationError("Incorrect credentials");
             }
             // If email and password are correct
+            // Sign token using the signToken function imported from auth
+            const token = signToken(userData);
+            // Return an Auth type that contains the token and user data
+            return { token, userData };
+        },
+        // This is a mutation called addUser that returns an Auth type.
+        // The username, email, and password are destructured from the args argument.
+        addUser: async (_root, { username, email, password }) => {
+            // Create a new user using the username, email, and password arguments
+            const userData = await User.create({ username, email, password });
             // Sign token using the signToken function imported from auth
             const token = signToken(userData);
             // Return an Auth type that contains the token and user data
