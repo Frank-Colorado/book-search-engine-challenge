@@ -47,3 +47,23 @@ export const SAVE_BOOK = gql`
     }
   }
 `;
+
+// This is a mutation called REMOVE_BOOK that returns a User type.
+export const REMOVE_BOOK = gql`
+  mutation removeBook($bookId: String!) {
+    removeBook(bookId: $bookId) {
+      _id
+      username
+      email
+      bookCount
+      savedBooks {
+        bookId
+        authors
+        description
+        image
+        link
+        title
+      }
+    }
+  }
+`;
