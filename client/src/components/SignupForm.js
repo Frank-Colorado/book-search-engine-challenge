@@ -17,7 +17,7 @@ const SignupForm = () => {
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
 
-  const [addUser, { error }] = useMutation(ADD_USER);
+  const [addUser, { error, data }] = useMutation(ADD_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -26,6 +26,7 @@ const SignupForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+    console.log("here in handleFormSubmit");
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
@@ -43,6 +44,7 @@ const SignupForm = () => {
       Auth.login(token);
     } catch (err) {
       console.error(err);
+      console.log("here in catch", err);
       setShowAlert(true);
     }
 

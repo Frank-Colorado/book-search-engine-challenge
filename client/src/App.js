@@ -1,26 +1,47 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
+  defaultDataIdFromObject,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+
 import SearchBooks from "./pages/SearchBooks";
 import SavedBooks from "./pages/SavedBooks";
 import Navbar from "./components/Navbar";
 
-// Create a new link that connects to the GraphQL API
 const httpLink = createHttpLink({
   uri: "/graphql",
 });
 
-// Create a new link that retrieves the token from localStorage
+const cache = new InMemoryCache({
+  typePolicies: {
+    User: {
+      fields: {
+        savedBooks: {
+          merge(existing, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+  },
+
+  dataIdFromObject: (object) => {
+    switch (object.__typename) {
+      case "User":
+        return object._id;
+      default:
+        return defaultDataIdFromObject(object);
+    }
+  },
+});
+
 const authLink = setContext((_, { headers }) => {
-  // Get the token from localStorage
   const token = localStorage.getItem("id_token");
-  // Return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
@@ -29,24 +50,22 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-// Create a new instance of ApolloClient
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  cache: new InMemoryCache(),
+  cache: cache,
 });
 
 function App() {
   return (
-    // Wrap the application in the ApolloProvider component and pass in the client
     <ApolloProvider client={client}>
       <Router>
         <>
           <Navbar />
-          <Switch>
-            <Route exact path="/" component={SearchBooks} />
-            <Route exact path="/saved" component={SavedBooks} />
+          <Routes>
+            <Route exact path="/" element={<SearchBooks />} />
+            <Route exact path="/saved" element={<SavedBooks />} />
             <Route render={() => <h1 className="display-2">Wrong page!</h1>} />
-          </Switch>
+          </Routes>
         </>
       </Router>
     </ApolloProvider>

@@ -49,6 +49,7 @@ const resolvers = {
     // This is a mutation called addUser that returns an Auth type.
     // The username, email, and password are destructured from the args argument.
     addUser: async (_root, { username, email, password }) => {
+      console.log("here in addUser");
       // Create a new user using the username, email, and password arguments
       const userData = await User.create({ username, email, password });
       // Sign token using the signToken function imported from auth
